@@ -5,6 +5,10 @@ import os
 
 def validation_strat(n_samples = 100):
 
+    """
+    :return: Positional IDs of chosen validation samples. 
+    These IDs will be used to create a validation set from the training set. 
+    """
     train_img_concepts = np.arange(1654)
     img_per_concept = 10
     val_concepts = np.sort(resample(train_img_concepts, replace=False,
@@ -16,10 +20,10 @@ def validation_strat(n_samples = 100):
     return idx_val
 
 def limit_samples(idx_val, n_samples = 160):
-    ''' 
+    """
     Reduce the dataset to n_samples*10 samples total. 
     :return: Reduced dataset samples indices. 
-    '''
+    """
     
     train_img_concepts = np.arange(1654)
     img_per_concept = 10
