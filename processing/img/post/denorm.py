@@ -1,7 +1,5 @@
-
-
-
 def denormalize(tensor, mean, std):
+    
     tensor_copy = tensor.clone().detach()  # make a copy of the tensor
     for t, m, s in zip(tensor_copy, mean, std):
         t.mul_(s).add_(m)  # denormalize
