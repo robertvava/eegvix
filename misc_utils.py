@@ -19,7 +19,7 @@ def get_validation_strat(n_samples = 100):
 
     return idx_val
 
-def get_limit_samples(idx_val, n_samples = 100):
+def get_limit_samples(idx_val, n_samples = 50):
     """
     Reduce the dataset to n_samples*10 samples total. 
     :return: Reduced dataset samples indices. 

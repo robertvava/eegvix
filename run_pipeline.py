@@ -13,6 +13,7 @@ def run_pipeline(model_config):
 
         g_cpu = torch.Generator()
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
         """If reduced, yet to be implemented. """
 
         idx_val = get_validation_strat()
@@ -35,22 +36,56 @@ def run_pipeline(model_config):
         return 1
 
 def train(train_dl, config, device):
+    print ("Model name: ", config['model'])
     if config['model'] == 'reg':
-        model = RegressionModel()
-    model = RegressionModel()
-    criterion = nn.MSELoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+        model = RegressionModel().to(device)
+    # model = RegressionModel().to(device)
+        criterion = nn.MSELoss()
+        optimizer = optim.Adam(model.parameters(), lr=0.001)
+        model.train() # Sets the module in training mode. 
+        for epoch in range(config['epochs']):
+            for i, (inputs, targets) in enumerate(train_dl):
+                inputs = inputs.to(device)
+                targets = targets.to(device)
+                optimizer.zero_grad()
+                outputs = model(inputs)
+                loss = criterion(outputs, targets)
+                loss.backward()
+                optimizer.step()
 
-    for epoch in range(config['epochs']):
-        for i, (inputs, targets) in enumerate(train_dl):
-            inputs = inputs.to(device)
-            targets = targets.to(device)
-            optimizer.zero_grad()
-            outputs = model(inputs)
-            loss = criterion(outputs, targets)
-            loss.backward()
-            optimizer.step()
-            if (i + 1) % 100 == 0:
-                print(f"Epoch [{epoch+1}/{config['epochs']}], Batch [{i+1}/{len(train_dl)}], Loss: {loss.item():.4f}")
+                if epoch % 5 == 0:
+                    print(f"Epoch [{epoch+1}/{config['epochs']}], Batch [{i+1}/{len(train_dl)}], Loss: {loss.item():.4f}")
 
+    elif config['model'] == 'vae':
+        from models.VAE.vae import VAE, VAELoss
+        
+        latent_dim = 128
+        learning_rate = 0.001
+        num_epochs = 100
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+        # Create VAE, loss function, and optimizer
+        model = VAE(latent_dim).to(device)
+        loss_fn = VAELoss()
+        optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+        model.train()
+        # Main training loop
+        for epoch in range(num_epochs):
+            
+            running_loss = 0.0
+            for i, (inputs, targets) in enumerate(train_dl):
+                inputs = inputs.to(device)
+                targets = targets.to(device)
+                
+                optimizer.zero_grad()
+                x_hat, mu, logvar = model(inputs)
+                
+                loss = loss_fn(x_hat, targets, mu, logvar)
+                loss.backward()
+                
+                optimizer.step()
+                running_loss += loss.item()
+
+            average_loss = running_loss / len(train_dl)
+            
+            print(f"Epoch {epoch+1}/{num_epochs}, Training Loss: {average_loss:.4f}")
