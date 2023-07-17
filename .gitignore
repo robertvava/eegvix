@@ -1,2 +1,3 @@
 eeg_dataset/**
 .ipynb_checkpoints
+models/diff/stable_diffusion/**
