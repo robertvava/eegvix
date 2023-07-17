@@ -2,7 +2,7 @@ import numpy as np
 import os 
 from PIL import Image
 from torchvision import transforms
-from misc_utils import transformation
+from processing.img.pre.transf import transformation
 from tqdm import tqdm
 import torch
 

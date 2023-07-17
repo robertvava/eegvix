@@ -1,5 +1,11 @@
 
 
+def run_pipeline(model_config):
+    if model_config['act'] == 'train':
+        
 
-def run_pipeline():
-    return 1
+
+        return 0 
+    elif model_config['act'] == 'generate':
+        return 1
+
