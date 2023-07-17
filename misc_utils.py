@@ -3,7 +3,7 @@ from sklearn.utils import resample
 import glob
 import os
 
-def validation_strat(n_samples = 100):
+def get_validation_strat(n_samples = 100):
 
     """
     :return: Positional IDs of chosen validation samples. 
@@ -19,7 +19,7 @@ def validation_strat(n_samples = 100):
 
     return idx_val
 
-def limit_samples(idx_val, n_samples = 160):
+def get_limit_samples(idx_val, n_samples = 100):
     """
     Reduce the dataset to n_samples*10 samples total. 
     :return: Reduced dataset samples indices. 
@@ -38,7 +38,7 @@ def limit_samples(idx_val, n_samples = 160):
             samples[i*img_per_concept:i*img_per_concept+img_per_concept] = True
     return samples
 
-def all_idx(idx_val, limit_samples):
+def get_all_idx(idx_val, limit_samples):
     
     train_img_concepts = np.arange(1654)
     img_per_concept = 10

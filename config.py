@@ -1,12 +1,12 @@
-def config(act = 'train', model = 'gan', epochs = 100, data = None):
+def config(act = 'train', model_name = 'reg', epochs = 100, data = None):
     ''' 
     act (action) options: train, generate
     model options: [('ic-gan', 'gan'), ('vq-vae', vae'), 'diff']
     '''
     return {'act': act,
-            'model': model,
+            'model': model_name,
             'data' : data,
-            'hp': config_hyperparam(model),
+            'hp': config_hyperparam(model_name),
             'epochs': epochs
             }
 
@@ -17,9 +17,11 @@ def config_hyperparam(model):
     type = 'o' means original, or "vanilla" model. 
     :return: config params  
     """
+    hp_config = {'optim': {'lr': 1e-4}}
+
     if model == 'diffusion':
         if type == 'o':
-            config = {
+            hp_config = {
                     'optim': {
                             'lr': 0.00001
                             },  
@@ -30,7 +32,7 @@ def config_hyperparam(model):
 
     elif model == 'gan':
         if type == 'o':
-            config = {
+            hp_config = {
                     'optim': {
                         'lr': 1e-4
                         },  
@@ -38,4 +40,4 @@ def config_hyperparam(model):
                                 'use_batch_norm': True
                             }
                     }
-    return config
+    return hp_config

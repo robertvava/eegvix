@@ -6,6 +6,8 @@ from processing.img.pre.transf import transformation
 from tqdm import tqdm
 import torch
 
+transformation = transformation()
+
 def collate_images_dataset(idx_val, reduce = False, limit_samples = False, data_dir = '/eeg_dataset', transform = None):
 
     img_dirs = os.path.join(os.getcwd() + data_dir, 'images', 'training_images')
