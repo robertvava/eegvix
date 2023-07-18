@@ -6,29 +6,39 @@ import torch
 import wandb
 import torch.nn as nn
 from models.no_gen.logreg import RegressionModel
+import os
 
-def run_pipeline(model_config):
+def run_pipeline(model_config, reduce = False):
 
     if model_config['act'] == 'train':
 
         g_cpu = torch.Generator()
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-        """If reduced, yet to be implemented. """
-
-        idx_val = get_validation_strat()
-        limit_samples = get_limit_samples(idx_val)
-        all_idx = get_all_idx(idx_val, limit_samples)
-        X_train, X_val, X_test, chnames, times = collate_participant_eeg(idx_val, reduce = True, limit_samples = limit_samples, all_idx = all_idx, to_torch = True)
-        y_train, y_val, y_test = collate_images_dataset(idx_val, reduce = True, limit_samples = limit_samples)
-
-        """Full data.   """
-
-        # X_train, X_val, X_test, chnames, times = collate_participant_eeg(idx_val, to_torch = True)
-        # y_train, y_val, y_test = collate_images_dataset(idx_val)
+        idx_val = get_validation_strat() # Validation idx
         
+        """If reduced, yet to be implemented. """
+        if reduce: 
 
-        train_dl, val_dl, test_dl = create_dataloaders(g_cpu, X_train, X_val, X_test, y_train, y_val, y_test)
+            limit_samples = get_limit_samples(idx_val)
+            all_idx = get_all_idx(idx_val, limit_samples)
+            X_train, X_val, X_test, chnames, times = collate_participant_eeg(idx_val, reduce = True, limit_samples = limit_samples, all_idx = all_idx, to_torch = True)
+            y_train, y_val, y_test = collate_images_dataset(idx_val, reduce = True, limit_samples = limit_samples)
+
+        # Full data
+        else: 
+            X_train, X_val, X_test, chnames, times = collate_participant_eeg(idx_val, to_torch = True)
+            y_train, y_val, y_test = collate_images_dataset(idx_val)
+        
+        if os.path.isfile('dataloaders/train_dl.pt'):
+            train_dl = torch.load('dataloaders/train_dl.pt')
+            val_dl = torch.load('dataloaders/val_dl.pt')
+            test_dl = torch.load('dataloaders/test_dl.pt')
+        else: 
+            train_dl, val_dl, test_dl = create_dataloaders(g_cpu, X_train, X_val, X_test, y_train, y_val, y_test)
+            torch.save(train_dl, 'dataloaders/train_dl.pt')
+            torch.save(val_dl, 'dataloaders/val_dl.pt')
+            torch.save(test_dl, 'dataloaders/test_dl.pt')
 
         train(train_dl, model_config, device)
 

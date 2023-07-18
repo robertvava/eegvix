@@ -62,11 +62,11 @@ class VAELoss(nn.Module):
     @staticmethod
     def kl_divergence(mu, logvar):
         # KL divergence between q(z|x) and p(z), where p(z)~N(0,I)
-        return -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+        return torch.mean(-0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp()))
 
     def reconstruction_loss(self, x, x_hat):
         # assuming x_hat is the mean of a distribution with fixed standard deviation
-        return self.gaussian_nll(x_hat, x, torch.ones_like(x_hat))
+        return torch.mean(self.gaussian_nll(x_hat, x, torch.ones_like(x_hat)))
 
     def forward(self, x, x_hat, mu, logvar):
         return self.kl_divergence(mu, logvar) + self.reconstruction_loss(x, x_hat)
