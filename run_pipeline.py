@@ -30,15 +30,15 @@ def run_pipeline(model_config, reduce = False):
             X_train, X_val, X_test, chnames, times = collate_participant_eeg(idx_val, to_torch = True)
             y_train, y_val, y_test = collate_images_dataset(idx_val)
         
-        if os.path.isfile('dataloaders/train_dl.pt'):
-            train_dl = torch.load('dataloaders/train_dl.pt')
-            val_dl = torch.load('dataloaders/val_dl.pt')
-            test_dl = torch.load('dataloaders/test_dl.pt')
-        else: 
-            train_dl, val_dl, test_dl = create_dataloaders(g_cpu, X_train, X_val, X_test, y_train, y_val, y_test)
-            torch.save(train_dl, 'dataloaders/train_dl.pt')
-            torch.save(val_dl, 'dataloaders/val_dl.pt')
-            torch.save(test_dl, 'dataloaders/test_dl.pt')
+        # if os.path.isfile('dataloaders/train_dl.pt'):
+        #     train_dl = torch.load('dataloaders/train_dl.pt')
+        #     val_dl = torch.load('dataloaders/val_dl.pt')
+        #     test_dl = torch.load('dataloaders/test_dl.pt')
+        # else: 
+        train_dl, val_dl, test_dl = create_dataloaders(g_cpu, X_train, X_val, X_test, y_train, y_val, y_test)
+            # torch.save(train_dl, 'dataloaders/train_dl.pt')
+            # torch.save(val_dl, 'dataloaders/val_dl.pt')
+            # torch.save(test_dl, 'dataloaders/test_dl.pt')
 
         train(train_dl, model_config, device)
 
