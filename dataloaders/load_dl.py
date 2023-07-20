@@ -11,8 +11,15 @@ def create_dataloaders(g_cpu, X_train, X_val, X_test, y_train, y_val, y_test):
             return len(self.y)
 
         def __getitem__(self, idx):
-            image = self.X[idx]
-            target = self.y[idx]
+            target = self.X[idx]
+            # If condition is met, then the repetitions were not collapsed into a mean. 
+            if len(self.X) > 1700000:
+                image = self.y[idx//10//4] 
+            else:
+                image = self.y[idx//10] 
+
+            return target, image
+        
 
             return image, target
         
