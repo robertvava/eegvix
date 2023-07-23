@@ -99,3 +99,21 @@ def collate_participant_eeg(idx_val, reduce = False, limit_samples = False, all_
     if reduce: 
         return signal_data_reduced, signal_data_val, signal_data_test, chnames, times
     return signal_data, signal_data_val, signal_data_test, chnames, times
+
+
+def align_eegs(X, apply_mean = False):
+    X =  torch.swapaxes(X, 0, 1)
+
+    if len(X) > 200:
+        if apply_mean:
+            X = X.reshape(-1, 17, 100)
+        else: 
+            X = X.reshape(-1, 4, 17, 100)
+            X = X.reshape(-1, 17, 100)
+    else:
+        if apply_mean:
+            X = X.reshape(-1, 17, 100)
+        else: 
+            X = X.reshape(-1, 80, 17, 100)
+            X = X.reshape(-1, 17, 100)
+
