@@ -4,11 +4,6 @@ import torch
 def create_dataloaders(g_cpu, X_train, X_val, X_test, y_train, y_val, y_test):
 
 
-    X_train = torch.swapaxes(X_train, 0, 1)
-    X_train = X_train.reshape(-1, 4, 17, 100)
-    X_train = X_train.reshape(-1, 17, 100)
-
-
     class EegDataset(Dataset):
         def __init__(self, X, y):
             self.X = X
@@ -22,8 +17,11 @@ def create_dataloaders(g_cpu, X_train, X_val, X_test, y_train, y_val, y_test):
             # If condition is met, then the repetitions were not collapsed into a mean. 
             if len(self.X) > 170000:
                 image = self.y[idx//(10*4)] 
-            else:
-                image = self.y[idx//10] 
+            elif len(self.X) > 17000:
+                image = self.y[idx//4] 
+            else: 
+                image = self.y[idx]
+            
         
             return target, image
     
@@ -43,11 +41,5 @@ def create_dataloaders(g_cpu, X_train, X_val, X_test, y_train, y_val, y_test):
 
     if len(train_dl) > 0:
         print ('Loaded successfully! ')
-
-    try:
-        len(train_dl) > 0
-        print ("Loaded successfully! \n")
-    except: 
-        print ("Failed to load")
 
     return train_dl, val_dl, test_dl
