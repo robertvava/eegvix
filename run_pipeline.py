@@ -1,36 +1,46 @@
-from datasetloader import DataSetLoader
-from dataloaders.load_dl import *
+from dataloading_utils.main_load import get_dataloaders
 import torch.optim as optim
 import torch
 import wandb
 import torch.nn as nn
 from models.no_gen.logreg import RegressionModel
 import os
+import numpy as np
+from torchvision.utils import save_image
+import matplotlib.pyplot as plt
+from torchvision.transforms import functional as F
+from misc_utils import denormalize
+from trainers.reg_trainer import NoGenTrainer
 
-def run_pipeline(model_config, reduce = False):
 
-    if model_config['act'] == 'train':
-
-        g_cpu = torch.Generator()
-        device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
+def run_pipeline(config):
+    print ("Model name: ", config.model_name)
+    print ("Mode: ", config.act)
+    
+    if config.act == 'train':
+        wandb.init(
+                # set the wandb project where this run will be logged
+                project="eeg-vix",
+                # track hyperparameters and run metadata
+                config={
+                "learning_rate": config.learning_rate,
+                "architecture": "LogReg",
+                "dataset": "Large and rich eeg-image dataset",
+                "epochs": config.num_epochs,
+                }
+            )
         
-        X_train, X_val, X_test, y_train, y_val, y_test = DataSetLoader.load_data()
-        # if os.path.isfile('dataloaders/train_dl.pt'):
-        #     train_dl = torch.load('dataloaders/train_dl.pt')
-        #     val_dl = torch.load('dataloaders/val_dl.pt')
-        #     test_dl = torch.load('dataloaders/test_dl.pt')
-        # else: 
-        train_dl, val_dl, test_dl = create_dataloaders(g_cpu, X_train, X_val, X_test, y_train, y_val, y_test)
-            # torch.save(train_dl, 'dataloaders/train_dl.pt')
-            # torch.save(val_dl, 'dataloaders/val_dl.pt')
-            # torch.save(test_dl, 'dataloaders/test_dl.pt')
+        g_cpu = torch.Generator()
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        train_dl, val_dl, test_dl = get_dataloaders(g_cpu, eeg_norm = config.eeg_norm, apply_mean = config.apply_mean, resolution = config.resolution, batch_size = config.batch_size)
 
-        train(train_dl, model_config, device)
-
-    elif model_config['act'] == 'generate':
+        reg_trainer = NoGenTrainer()
+        reg_trainer.train(train_dl, val_dl, config.num_epochs, device = device)
+    
+    elif config.act == 'generate':
         return 1
 
-def train(train_dl, config, device = 'cpu'):
-    print ("Model name: ", config['model'])
+
+
+    
     
