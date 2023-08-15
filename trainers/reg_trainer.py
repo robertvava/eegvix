@@ -13,7 +13,7 @@ from torchvision.transforms import functional as Fnc
 hp = HPConfig()
 config = ExperimentConfig()
 
-class NoGenTrainer:
+class RegTrainer:
     def __init__(self, criterion:str = 'mse', optimizer: str = 'adam', device: torch.device = 'cpu'):
         self.model = RegressionModel()
         self.criterion = criterion
@@ -30,7 +30,7 @@ class NoGenTrainer:
                                 weight_decay=hp.weight_decay,
                                 )
 
-    def train(self, train_dl: DataLoader, val_dl: DataLoader, epoch: int, device: torch.device):
+    def train(self, train_dl: DataLoader, val_dl: DataLoader, device: torch.device):
 
         model = self.model
         criterion = self.criterion

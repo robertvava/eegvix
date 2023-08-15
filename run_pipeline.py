@@ -1,16 +1,13 @@
 from dataloading_utils.main_load import get_dataloaders
-import torch.optim as optim
 import torch
 import wandb
 import torch.nn as nn
 from models.no_gen.logreg import RegressionModel
-import os
-import numpy as np
 from torchvision.utils import save_image
 import matplotlib.pyplot as plt
 from torchvision.transforms import functional as F
 from misc_utils import denormalize
-from trainers.reg_trainer import NoGenTrainer
+from trainers.reg_trainer import RegTrainer
 
 
 def run_pipeline(config):
@@ -24,8 +21,8 @@ def run_pipeline(config):
                 # track hyperparameters and run metadata
                 config={
                 "learning_rate": config.learning_rate,
-                "architecture": "LogReg",
-                "dataset": "Large and rich eeg-image dataset",
+                "architecture": config.model_name,
+                "dataset": "Large eeg-image dataset",
                 "epochs": config.num_epochs,
                 }
             )
@@ -34,8 +31,19 @@ def run_pipeline(config):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         train_dl, val_dl, test_dl = get_dataloaders(g_cpu, eeg_norm = config.eeg_norm, apply_mean = config.apply_mean, resolution = config.resolution, batch_size = config.batch_size)
 
-        reg_trainer = NoGenTrainer()
-        reg_trainer.train(train_dl, val_dl, config.num_epochs, device = device)
+        if config.model_name == 'reg':
+            reg_trainer = RegTrainer()
+            reg_trainer.train(train_dl, val_dl, config.num_epochs, device = device, epochs = config.num_epochs)
+
+        elif config.model_name == 'img_ae':
+            from trainers.img_ae_trainer import Img_AE_Trainer
+            trainer = Img_AE_Trainer(latent_dim = config.latent_dim, resolution = config.resolution[0])
+            trainer.train(train_dl, val_dl, config.num_epochs, device = device, epochs = config.num_epochs)
+        
+        elif config.model_name == 'eeg_ae':
+            from trainers.eeg_ae_trainer import EEG_AE_Trainer
+            trainer = EEG_AE_Trainer(latent_dim = config.latent_dim, resolution = config.resolution[0])
+            trainer.train(train_dl, val_dl, config.num_epochs, device = device, epochs = config.num_epochs)
     
     elif config.act == 'generate':
         return 1

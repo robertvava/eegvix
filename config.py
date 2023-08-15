@@ -7,9 +7,10 @@ import os
 @dataclass
 class HPConfig:
     criterion: torch.nn.modules.loss = nn.MSELoss()
-    learning_rate: float = 1e-4
-    weight_decay: float = 1e-3
-    model: str = 'VAE'
+    learning_rate: float = 0.00005
+    weight_decay: float = 1e-4
+    latent_dim: int = 512
+    
         
     def __post_init__(self):
         if self.model == 'GAN':
@@ -31,12 +32,11 @@ class HPConfig:
 @dataclass
 class ExperimentConfig:
     hp = HPConfig()
+
     # General 
-    learning_rate: float = hp.learning_rate
     model_name: str = 'vae'
     act: str = 'train'
-    validation_n_samples: int = 100
-    batch_size: int = 16
+    batch_size: int = 32
     full_exp: bool = False
     transformation: None = None
     num_workers: int = 4
@@ -44,7 +44,7 @@ class ExperimentConfig:
     shuffle_dl: bool = True
     drop_last_dl: bool = False
     mode: str = 'train'
-    num_epochs: int = 100
+    num_epochs: int = 500
     
     # Images config
     transform_resolution: tuple = field(init=False)
@@ -57,6 +57,13 @@ class ExperimentConfig:
     all_participants: bool = False
     eeg_norm: bool = True
         
+    # Experiment params
+    learning_rate: float = hp.learning_rate
+    validation_n_samples: int = 150
+    latent_dim: int = hp.latent_dim
+    early_stopping_patience: int = 25
+    weight_decay:float = hp.weight_decay
+
     # Paths
     data_dir: Path = os.getcwd() + '/eeg_dataset'
     images_dir: Path = '/images'

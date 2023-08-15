@@ -26,7 +26,7 @@ def align_eegs(X, apply_mean = False, all_participants = False, test = False):
     return X
 
 
-def validation_strat(n_samples = 100):
+def validation_strat(n_samples = 150):
 
     train_img_concepts = np.arange(1654)
     img_per_concept = 10
