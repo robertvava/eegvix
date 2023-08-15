@@ -1,2 +1,11 @@
 eeg_dataset/**
 .ipynb_checkpoints
+models/diff/stable_diffusion/**.ckpt
+**.pdf
+**.ipynb
+viz.py
+test.py
+wandb/**
+dataloaders/**
+figures
+__pycache__/**
