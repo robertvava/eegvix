@@ -3,8 +3,6 @@ eeg_dataset/**
 models/diff/stable_diffusion/**.ckpt
 **.pdf
 **.ipynb
-viz.py
-test.py
 wandb/**
 dataloaders/**
 figures

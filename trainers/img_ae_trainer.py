@@ -18,7 +18,7 @@ config = ExperimentConfig()
 
 
 class Img_AE_Trainer:
-    def __init__(self, latent_dim:int = 512, resolution = 64, visualise = False, device: torch.device = 'cpu'):
+    def __init__(self, latent_dim:int = 512, resolution = 64, visualise = False, device: torch.device = 'cpu', save_model = False):
         self.visualise = visualise
         self.latent_dim = latent_dim
         self.resolution = resolution
@@ -87,6 +87,10 @@ class Img_AE_Trainer:
             if val_loss < best_val_loss:
                 best_val_loss = val_loss
                 epochs_without_improvement = 0
+                if save_model:
+                    torch.save(encoder.state_dict(), 'trained_models/best_img_encoder' + str(latent_dim) + '.pt')
+                    torch.save(decoder.state_dict(), 'trained_models/best_img_decoder' + str(latent_dim) + '.pt')
+
             else:
                 epochs_without_improvement += 1
                 if epochs_without_improvement == early_stopping_patience:

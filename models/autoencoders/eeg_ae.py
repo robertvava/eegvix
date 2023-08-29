@@ -1,5 +1,3 @@
-import torch.nn as nn
-
 class EEGEncoder(nn.Module):
     def __init__(self, input_channels, latent_dim=128):
         super(EEGEncoder, self).__init__()
@@ -7,6 +5,7 @@ class EEGEncoder(nn.Module):
         self.latent_dim = latent_dim
         channels_list = [input_channels, 64, 128, 128]
         self.layers = nn.ModuleList()
+        self.shapes = []
 
         current_channels = input_channels
         kernel_size = 4
@@ -22,6 +21,7 @@ class EEGEncoder(nn.Module):
                 nn.Conv1d(channels_list[i], channels_list[i+1], kernel_size, stride, padding),
                 nn.BatchNorm1d(channels_list[i+1])
             ))
+            self.shapes.append(self.compute_output_shape(channels_list[i+1], kernel_size, stride, padding))
 
         self.layers.append(nn.ReLU())
         self.encoder = nn.Sequential(*self.layers)
@@ -35,7 +35,6 @@ class EEGEncoder(nn.Module):
         x = self.encoder(x)
         x = x.view(x.size(0), -1)
         x_fc = self.fc(x)
-
         return x_fc
 
 class EEGDecoder(nn.Module):
@@ -53,6 +52,7 @@ class EEGDecoder(nn.Module):
         kernel_size = 4
         stride = 2
         padding = 0
+
 
         for i in range(len(channels_list)-1, 0, -1):
             self.layers.append(nn.Sequential(
@@ -78,7 +78,9 @@ class EEGDecoder(nn.Module):
         x = self.decode(x)
         return x
 
+
 # ===============================================================================================================
+
 
 class EEGAutoEncoder(nn.Module):
     def __init__(self, latent_dim=128):
@@ -91,30 +93,31 @@ class EEGAutoEncoder(nn.Module):
         x = self.encoder(x)
         x = self.decoder(x)
         return x
-    
+
+
 
 class EEGAELoss(nn.Module):
-    ''' This loss will try to align the original and reconstructed eegs on three aspects:
-        
+    ''' This loss will align the original and reconstructed eegs on three aspects:
+
         1. Amplitude preservation preserved by MSELoss
         2. Robustness to outliers preserved by HuberLoss
-        3. Shape preservation using CosineSimilarity for each of the 17 channels individually. 
+        3. Shape preservation using CosineSimilarity for each of the 17 channels individually.
     '''
-    def __init__(self, lambda_mse = 0.5, lambda_huber=0.25, lambda_cosine = 0.25):
+    def __init__(self, lambda_mse = 0.7, lambda_huber=0.05, lambda_cosine = 0.25):
         super(EEGAELoss, self).__init__()
         self.lambda_mse = lambda_mse
         self.lambda_huber = lambda_huber
         self.lambda_cosine = lambda_cosine
-        
+
         self.mseloss = nn.MSELoss()
         self.uber_loss = nn.SmoothL1Loss()
-        self.cosine_sim = nn.CosineSimilarity(dim=2)  
-        
+        self.cosine_sim = nn.CosineSimilarity(dim=2)
+
     def forward(self, original, reconstructed):
-        loss1 = self.mseloss(original, reconstructed) 
+        loss1 = self.mseloss(original, reconstructed)
         loss2 = self.uber_loss(original, reconstructed)
         loss3 = self.cosine_sim(original, reconstructed)
         loss3 = 1.0 - loss3.mean(dim = 1)
-    
-        
+
+
         return (self.lambda_mse * loss1 + self.lambda_huber * loss2 + self.lambda_cosine * loss3.mean()) * 10

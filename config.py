@@ -10,24 +10,7 @@ class HPConfig:
     learning_rate: float = 0.00005
     weight_decay: float = 1e-4
     latent_dim: int = 512
-    
-        
-    def __post_init__(self):
-        if self.model == 'GAN':
-            self.criterion = nn.BCELoss()
 
-        elif self.model == 'VAE':
-
-            self.criterion = nn.KLDivLoss(reduction = "none")
-
-        elif self.model == 'diff':
-
-            self.criterion = nn.MSELoss()
-    # GAN HP
-    
-    # VAE HP
-        
-    # Diffusions HP
         
 @dataclass
 class ExperimentConfig:
@@ -45,6 +28,7 @@ class ExperimentConfig:
     drop_last_dl: bool = False
     mode: str = 'train'
     num_epochs: int = 500
+    save_model: bool = False
     
     # Images config
     transform_resolution: tuple = field(init=False)
