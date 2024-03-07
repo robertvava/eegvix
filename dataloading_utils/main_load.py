@@ -105,8 +105,8 @@ def collate_participant_eeg(idx_val, eeg_norm = False, apply_mean = False, all_i
 class EEGImagePairs(Dataset):
     def __init__(self, X, y, eeg_norm = True, transform = None, apply_mean = True, all_participants = False, test = False):
 
-        self.X = X
-        self.y = y
+        self.X = X # EEGs
+        self.y = y # Images
         self.transform = transform
         self.test = test
         self.mean_applied = apply_mean
