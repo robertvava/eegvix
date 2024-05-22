@@ -50,11 +50,12 @@ def run_pipeline(config):
             trainer = AlignmentTrainer(latent_dim = config.latent_dim, resolution = config.resolution[0])
             trainer.train(train_dl, val_dl, config.num_epochs, device = device, epochs = config.num_epochs, save_model = config.save_models)
 
-        elif config.model_name = 'joint':
+        elif config.model_name == 'joint':
             from trainers.joint_trainer import JointTrainer
             trainer = JointTrainer(latent_dim = config.latent_dim, resolution = config.resolution[0])
             trainer.train(train_dl, val_dl, config.num_epochs, device = device, epochs = config.num_epochs, save_model = config.save_models)
 
+    # To be updated!
     elif config.act == 'generate':
         return 1
 

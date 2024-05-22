@@ -159,9 +159,9 @@ def get_dataloaders(g_cpu = torch.Generator(), eeg_norm = True, apply_mean = Tru
         return train_dl, val_dl, test_dl
     
     elif os.path.isfile('dataloaders/eeg_train_data.pt'):
-        X_train, X_val, X_test, _, _ = collate_participant_eeg(idx_val, apply_mean = apply_mean, to_torch = True)
+        X_train, X_val, X_test, _, _ = collate_participant_eeg(idx_val, apply_mean = apply_mean)
     else:
-        X_train, X_val, X_test, _, _ = collate_participant_eeg(idx_val, apply_mean = apply_mean, to_torch = True)
+        X_train, X_val, X_test, _, _ = collate_participant_eeg(idx_val, apply_mean = apply_mean)
         if not apply_mean: 
             X_train = align_eegs(X_train)
             X_val = align_eegs(X_val)
