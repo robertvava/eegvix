@@ -7,6 +7,7 @@ This project has been submitted as part of the MSc in Artificial Intelligence an
 ## Data 
 The dataset required for running this experiment can be found at: https://doi.org/10.1016/j.neuroimage.2022.119754. 
 
+The experiment setup is expecting the following project structure
 
 ## Running experiments
 You can create the conda environment using: 
