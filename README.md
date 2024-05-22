@@ -84,7 +84,29 @@ class ExperimentConfig:
         self.resolution = (64, 64)
 ```
 
+## Results 
 
+Below you can find the overall results of the projects. The results of the diffusion model have been obtained after the submission of the dissertation, which is why they have not been included. 
+
+### Aligned Recon
+The results of the Joint/Aligned model reconstruction: 
+
+![Aligned Reconstruction](https://github.com/robertvava/eegvix/blob/main/assets/align_rec.png)
+
+### Concept Space
+The task of image recreation from brain signals, without an intermediary kernel, is a difficult one - in previous research, it has been done using an EEG -> String description -> BERT -> Reconstructed Image, or other intermediary methods. The success of this project is defined by the best performing model identifying a broad similarity space, which encapsulates both concepts, and image characteristics: 
+
+![Concept Space](https://github.com/robertvava/eegvix/blob/main/assets/concept_space.png)
+
+### Reconstruction tasks
+
+A secondary achievement was the autoencoding tasks for reconstructing the EEGs and Images, depicted below: 
+
+#### Image Reconstruction
+![Image Reconstructions](https://github.com/robertvava/eegvix/blob/main/assets/image_rec.png)
+
+#### EEG Reconstructions 
+![EEG Reconstructions](https://github.com/robertvava/eegvix/blob/main/assets/eeg_rec.png)
 
 ## Contact 
 
