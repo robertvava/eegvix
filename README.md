@@ -23,6 +23,16 @@ You can run the experiment by executing
 python main.py --model_name vae --num_epochs 500 --mode train --batch_size 32
 ```
 
+You will be prompted for a Weights and Biases (wandb) setup as such: 
+```
+wandb: (1) Create a W&B account
+wandb: (2) Use an existing W&B account
+wandb: (3) Don't visualize my results
+wandb: Enter your choice:
+```
+
+If you have no wandb account, you can simply press 3 (no visualization) and enter. 
+
 More config parameters can be tweaked in config.py (inclusive of hyperparameters) as follows: 
 ```
 @dataclass
