@@ -4,6 +4,7 @@ import torch.nn as nn
 from pathlib import Path
 import os
 
+# Hyperparameters configuration
 @dataclass
 class HPConfig:
     criterion: torch.nn.modules.loss = nn.MSELoss()
