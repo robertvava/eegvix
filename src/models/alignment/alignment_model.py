@@ -154,7 +154,7 @@ class AlignmentLoss(nn.Module):
         mmd = self.mmd_loss(eeg_latent, image_latent)
         mse = self.mse_loss(eeg_latent, image_latent)
         cosinesim = self.cosine_similarity(eeg_latent, image_latent)
-        triplet = 
+        # triplet = 
         total_loss =  self.lambda_mmd * mmd + self.lambda_mse * mse + (1.0 - (self.lambda_cosinesim * cosinesim.mean()))
         return total_loss
 
