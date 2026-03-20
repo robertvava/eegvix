@@ -6,4 +6,4 @@ models/diff/stable_diffusion/**.ckpt
 wandb/**
 dataloaders/**
 figures
-__pycache__/**
+__pycache__
