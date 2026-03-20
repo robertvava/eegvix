@@ -1,3 +1,8 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+
 class ImageEncoder(nn.Module):
     def __init__(self, input_channels = 3, latent_dim=128):
         super(ImageEncoder, self).__init__()
@@ -47,9 +52,6 @@ class EEGEncoder(nn.Module):
         padding = 0
 
         for i in range(len(channels_list)-1):
-            if i == len(channels_list):
-                self.layers.append(nn.Conv1d(current_channels, current_channels, kernel_size = 1))
-                break
             current_channels = channels_list[i+1]
             self.layers.append(nn.Sequential(
                 nn.Conv1d(channels_list[i], channels_list[i+1], kernel_size, stride, padding),
@@ -157,15 +159,6 @@ class AlignmentLoss(nn.Module):
         # triplet = 
         total_loss =  self.lambda_mmd * mmd + self.lambda_mse * mse + (1.0 - (self.lambda_cosinesim * cosinesim.mean()))
         return total_loss
-
-def generate_numbers():
-    numbers = torch.rand(3)
-    
-    numbers = torch.sort(numbers).values
-    
-    result = torch.cat([numbers[0], numbers[1] - numbers[0], numbers[2] - numbers[1], 1 - numbers[2]])
-    
-    return result
 
 class ImageDecoder(nn.Module):
     def __init__(self, latent_dim = 32, resolution = 64):

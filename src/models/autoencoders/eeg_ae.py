@@ -1,3 +1,7 @@
+import torch
+import torch.nn as nn
+
+
 class EEGEncoder(nn.Module):
     def __init__(self, input_channels, latent_dim=128):
         super(EEGEncoder, self).__init__()
@@ -13,9 +17,6 @@ class EEGEncoder(nn.Module):
         padding = 0
 
         for i in range(len(channels_list)-1):
-            if i == len(channels_list):
-                self.layers.append(nn.Conv1d(current_channels, current_channels, kernel_size = 1))
-                break
             current_channels = channels_list[i+1]
             self.layers.append(nn.Sequential(
                 nn.Conv1d(channels_list[i], channels_list[i+1], kernel_size, stride, padding),

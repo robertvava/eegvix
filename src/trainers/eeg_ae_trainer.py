@@ -1,10 +1,8 @@
-
-from models.no_gen.logreg import RegressionModel
-import torch.nn as nn 
+import torch
+import torch.nn as nn
 from torch.optim import Adam
 from config import HPConfig, ExperimentConfig
 from torch.utils.data import DataLoader
-import torch.optim
 from misc_utils import denormalize
 import wandb
 import matplotlib.pyplot as plt
@@ -19,8 +17,9 @@ class EEG_AE_Trainer:
     def __init__(self, latent_dim:int = 512, visualise = False, device: torch.device = 'cpu', save_model = False):
         self.latent_dim = latent_dim
         self.visualise = visualise
+        self.save_model = save_model
 
-    def train(self, train_dl: DataLoader, val_dl: DataLoader, epoch: int, device: torch.device):
+    def train(self, train_dl: DataLoader, val_dl: DataLoader, num_epochs: int, device: torch.device, epochs: int = 500, save_model: bool = False):
 
             # Training
         from torchvision.transforms import functional as Fn
@@ -77,9 +76,9 @@ class EEG_AE_Trainer:
             if val_loss < best_val_loss:
                 best_val_loss = val_loss
                 epochs_without_improvement = 0
-                if save_model:
-                    torch.save(encoder.state_dict(), 'trained_models/best_img_encoder' + str(latent_dim) + '.pt')
-                    torch.save(decoder.state_dict(), 'trained_models/best_img_decoder' + str(latent_dim) + '.pt')
+                if save_model or self.save_model:
+                    torch.save(model.encoder.state_dict(), 'trained_models/best_eeg_encoder' + str(latent_dim) + '.pt')
+                    torch.save(model.decoder.state_dict(), 'trained_models/best_eeg_decoder' + str(latent_dim) + '.pt')
             else:
                 epochs_without_improvement += 1
                 if epochs_without_improvement == early_stopping_patience:

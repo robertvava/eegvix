@@ -1,3 +1,8 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+
 class ImageEncoder(nn.Module):
     def __init__(self, input_channels = 3, latent_dim=128):
         super(ImageEncoder, self).__init__()

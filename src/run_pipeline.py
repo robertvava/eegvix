@@ -47,13 +47,13 @@ def run_pipeline(config):
 
         elif config.model_name == 'alignment':
             from trainers.alignment_trainer import AlignmentTrainer
-            trainer = AlignmentTrainer(latent_dim = config.latent_dim, resolution = config.resolution[0])
-            trainer.train(train_dl, val_dl, config.num_epochs, device = device, epochs = config.num_epochs, save_model = config.save_models)
+            trainer = AlignmentTrainer(latent_dim = config.latent_dim, save_model = config.save_model)
+            trainer.train(train_dl, val_dl, config.num_epochs, device = device, epochs = config.num_epochs, save_model = config.save_model)
 
         elif config.model_name == 'joint':
             from trainers.joint_trainer import JointTrainer
-            trainer = JointTrainer(latent_dim = config.latent_dim, resolution = config.resolution[0])
-            trainer.train(train_dl, val_dl, config.num_epochs, device = device, epochs = config.num_epochs, save_model = config.save_models)
+            trainer = JointTrainer(latent_dim = config.latent_dim, save_model = config.save_model)
+            trainer.train(train_dl, val_dl, config.num_epochs, device = device, epochs = config.num_epochs, save_model = config.save_model)
 
     # To be updated!
     elif config.act == 'generate':
