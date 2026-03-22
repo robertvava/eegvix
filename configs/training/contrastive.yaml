@@ -1,0 +1,21 @@
+learning_rate: 3e-4
+weight_decay: 0.01
+warmup_epochs: 10
+max_epochs: 200
+early_stopping_patience: 20
+
+optimizer: adamw
+scheduler: cosine_warmup
+
+# InfoNCE loss
+init_temperature: 0.07
+learnable_temperature: true
+
+# Trainer
+precision: 16-mixed
+gradient_clip_val: 1.0
+accumulate_grad_batches: 1
+check_val_every_n_epoch: 1
+
+# Subject embedding warmup
+subject_embedding_warmup_epochs: 5

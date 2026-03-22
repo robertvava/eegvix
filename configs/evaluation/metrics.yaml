@@ -1,0 +1,12 @@
+retrieval:
+  top_k: [1, 5, 10, 50, 200]
+
+zero_shot:
+  n_test_images: ${data.n_test_images}
+  n_test_reps: ${data.n_test_reps}
+
+generation:
+  compute_fid: true
+  compute_ssim: true
+  compute_lpips: true
+  n_generated_per_condition: 5

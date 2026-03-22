@@ -1,0 +1,22 @@
+# @package _global_
+
+defaults:
+  - /data: things_eeg2
+  - /model: eeg_encoder
+  - /training: contrastive
+  - /evaluation: metrics
+  - /wandb: default
+
+seed: 42
+
+data:
+  batch_size: 16
+  num_workers: 0
+  n_subjects: 1
+
+training:
+  max_epochs: 5
+  early_stopping_patience: 3
+
+wandb:
+  mode: disabled

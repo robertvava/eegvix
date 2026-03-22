@@ -1,0 +1,4 @@
+project: eegvix-v2
+entity: null
+tags: []
+mode: online  # online, offline, disabled

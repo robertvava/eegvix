@@ -1,0 +1,26 @@
+# Spatiotemporal Transformer EEG Encoder
+eeg_encoder:
+  n_channels: ${data.n_channels}
+  n_timepoints: ${data.n_timepoints}
+  embed_dim: 512
+  num_temporal_conv_layers: 3
+  temporal_kernel_sizes: [7, 5, 3]
+  n_spatial_heads: 4
+  n_temporal_transformer_layers: 4
+  n_temporal_heads: 8
+  dropout: 0.1
+  use_frequency_branch: true
+  output_dim: 768  # CLIP ViT-L/14 embedding dimension
+
+subject_embedding:
+  n_subjects: ${data.n_subjects}
+  embed_dim: ${model.eeg_encoder.embed_dim}
+
+projection_head:
+  input_dim: ${model.eeg_encoder.output_dim}
+  hidden_dim: 2048
+  output_dim: 768
+
+clip:
+  model_name: ViT-L-14
+  pretrained: openai
