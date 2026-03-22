@@ -1,0 +1,18 @@
+learning_rate: 1e-5
+weight_decay: 0.01
+max_epochs: 50
+
+# Stable Diffusion
+sd_model: stabilityai/stable-diffusion-2-1
+use_ip_adapter: true
+use_lora: true
+lora_rank: 16
+lora_alpha: 32
+
+# Generation
+num_inference_steps: 50
+guidance_scale: 7.5
+image_resolution: 512
+
+precision: 16-mixed
+gradient_clip_val: 1.0

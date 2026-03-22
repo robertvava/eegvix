@@ -1,0 +1,45 @@
+data_dir: ${oc.env:EEGVIX_DATA_DIR,eeg_dataset}
+preprocessed_dir: ${data.data_dir}/preprocessed
+
+n_subjects: 10
+n_channels: 17
+n_timepoints: 100
+sampling_rate: 100  # Hz (downsampled from 1000)
+time_start: -0.2  # seconds relative to stimulus onset
+time_end: 0.8
+
+n_train_images: 16540
+n_test_images: 200
+n_train_reps: 4
+n_test_reps: 80
+images_per_concept: 10
+
+# Channels: occipital and parietal
+channels:
+  - O1
+  - Oz
+  - O2
+  - PO7
+  - PO3
+  - POz
+  - PO4
+  - PO8
+  - P7
+  - P5
+  - P3
+  - P1
+  - Pz
+  - P2
+  - P4
+  - P6
+  - P8
+
+# Data loading
+batch_size: 256
+num_workers: 4
+average_repetitions: true
+val_n_concepts: 150
+val_random_state: 42
+
+# Precomputed embeddings
+clip_embeddings_dir: ${data.data_dir}/clip_embeddings

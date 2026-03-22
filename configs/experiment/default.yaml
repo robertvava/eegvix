@@ -1,0 +1,10 @@
+# @package _global_
+
+defaults:
+  - /data: things_eeg2
+  - /model: eeg_encoder
+  - /training: contrastive
+  - /evaluation: metrics
+  - /wandb: default
+
+seed: 42
