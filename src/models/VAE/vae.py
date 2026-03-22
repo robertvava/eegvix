@@ -5,7 +5,7 @@ from torch.nn import functional as F
 class Encoder(nn.Module):
     def __init__(self, latent_dim):
         super(Encoder, self).__init__()
-        
+
         self.conv1 = nn.Conv1d(17, 64, kernel_size=3, stride=1, padding=1)
         self.bn1 = nn.BatchNorm1d(64)
         self.conv2 = nn.Conv1d(64, 128, kernel_size=3, stride=2, padding=1)
@@ -21,38 +21,39 @@ class Encoder(nn.Module):
         mu = self.fc_mu(x)
         log_var = self.fc_var(x)
         return mu, log_var
-    
+
     def _init_weights(self):
         for m in self.modules():
             if isinstance(m, nn.Linear):
-                if m == self.fc_mu or m == self.fc_logvar:  # final layer
+                if m is self.fc_mu or m is self.fc_var:
                     nn.init.normal_(m.weight, mean=0., std=0.01)
                     nn.init.constant_(m.bias, 0.)
                 else:
-                    nn.init.kaiming_normal_(m.weight)  # He initialization
+                    nn.init.kaiming_normal_(m.weight)
                     nn.init.constant_(m.bias, 0.)
 
 class Decoder(nn.Module):
-    def __init__(self, latent_dim):
+    def __init__(self, latent_dim, resolution=64):
         super(Decoder, self).__init__()
+        self.resolution = resolution
         self.fc = nn.Linear(latent_dim, 128 * 50)
         self.deconv1 = nn.ConvTranspose1d(128, 64, kernel_size=3, stride=2, padding=1, output_padding=1)
         self.bn1 = nn.BatchNorm1d(64)
-        self.fc_out = nn.Linear(64*100, 3*244*244)
+        self.fc_out = nn.Linear(64*100, 3 * resolution * resolution)
 
     def forward(self, z):
         x = self.fc(z)
         x = x.view(x.size(0), 128, 50)
         x = F.relu(self.bn1(self.deconv1(x)))
         x = x.view(x.size(0), -1)
-        x_hat = torch.sigmoid(self.fc_out(x)).view(x.size(0), 3, 244, 244)
+        x_hat = torch.sigmoid(self.fc_out(x)).view(x.size(0), 3, self.resolution, self.resolution)
         return x_hat
 
 class VAE(nn.Module):
-    def __init__(self, input_dim, latent_dim):
+    def __init__(self, latent_dim, resolution=64):
         super(VAE, self).__init__()
-        self.encoder = Encoder(input_dim,  latent_dim)
-        self.decoder = Decoder(latent_dim)
+        self.encoder = Encoder(latent_dim)
+        self.decoder = Decoder(latent_dim, resolution)
 
     def reparameterize(self, mu, logvar):
         std = torch.exp(0.5 * logvar)

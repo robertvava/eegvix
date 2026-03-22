@@ -26,12 +26,12 @@ def align_eegs(X, apply_mean = False, all_participants = False, test = False):
     return X
 
 
-def validation_strat(n_samples = 150):
+def validation_strat(n_samples = 150, random_state = 13):
 
     train_img_concepts = np.arange(1654)
     img_per_concept = 10
     val_concepts = np.sort(resample(train_img_concepts, replace=False,
-        n_samples=n_samples))
+        n_samples=n_samples, random_state=random_state))
     idx_val = np.zeros((len(train_img_concepts)*img_per_concept), dtype=bool)
     for i in val_concepts:
         idx_val[i*img_per_concept:i*img_per_concept+img_per_concept] = True

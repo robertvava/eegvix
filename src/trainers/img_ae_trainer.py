@@ -1,4 +1,5 @@
 
+import torch
 from models.no_gen.logreg import RegressionModel
 from torch import optim as optim
 from config import HPConfig, ExperimentConfig
@@ -8,7 +9,7 @@ from misc_utils import denormalize
 import wandb
 import matplotlib.pyplot as plt
 from torchvision.transforms import functional as Fnc
-from models.autoencoders.img_ae import ImageDecoder, ImageEncoder, IMGAELoss
+from models.autoencoders.img_ae import ImageDecoder, ImageEncoder, ReconLoss
 from torchvision.transforms import functional as Fn
 import torch.nn.functional as F
 from torch.optim.lr_scheduler import ReduceLROnPlateau
@@ -22,15 +23,12 @@ class Img_AE_Trainer:
         self.visualise = visualise
         self.latent_dim = latent_dim
         self.resolution = resolution
-        self.encoder = ImageEncoder(input_channels=3, latent_dim=self.latent_dim)
-        self.decoder = ImageDecoder(latent_dim=self.latent_dim, resolution=self.resolution)
+        self.save_model = save_model
 
-        
-
-    def train(self, train_dl: DataLoader, val_dl: DataLoader, device: torch.device, epochs:int  = 500):        
+    def train(self, train_dl: DataLoader, val_dl: DataLoader, num_epochs: int, device: torch.device, epochs: int = 500, save_model: bool = False):
 
         latent_dim = self.latent_dim
-        resolution = self.resolution  
+        resolution = self.resolution
         encoder = ImageEncoder(input_channels=3, latent_dim=latent_dim).to(device)
         decoder = ImageDecoder(latent_dim=latent_dim, resolution=resolution).to(device)
 
@@ -40,7 +38,7 @@ class Img_AE_Trainer:
         best_val_loss = float('inf')
         learning_rate = config.learning_rate
 
-        criterion = IMGAELoss()
+        criterion = ReconLoss()
 
         optimizer = optim.Adam(list(encoder.parameters()) + list(decoder.parameters()), lr=learning_rate, weight_decay=config.weight_decay)
         scheduler = ReduceLROnPlateau(optimizer, 'min', patience=5, factor=0.5, verbose=True)
@@ -87,7 +85,7 @@ class Img_AE_Trainer:
             if val_loss < best_val_loss:
                 best_val_loss = val_loss
                 epochs_without_improvement = 0
-                if save_model:
+                if save_model or self.save_model:
                     torch.save(encoder.state_dict(), 'trained_models/best_img_encoder' + str(latent_dim) + '.pt')
                     torch.save(decoder.state_dict(), 'trained_models/best_img_decoder' + str(latent_dim) + '.pt')
 
